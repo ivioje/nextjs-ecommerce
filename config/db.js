@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 let cached = global.mongoose
 
 if(!cached){
-    cached = glocal.mongoose = { conn: null, promise: null }
+    cached = global.mongoose = { conn: null, promise: null }
 }
 
 async function connectToDB() {
