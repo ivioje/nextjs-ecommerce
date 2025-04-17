@@ -19,19 +19,26 @@ export const AppContextProvider = (props) => {
 
     const [products, setProducts] = useState([])
     const [userData, setUserData] = useState(false)
-    const [isSeller, setIsSeller] = useState(true)
+    const [isSeller, setIsSeller] = useState(false)
     const [cartItems, setCartItems] = useState({})
 
     const fetchProductData = async () => {
         setProducts(productsDummyData)
     }
-
+    
     const fetchUserData = async () => {
-        setUserData(userDummyData)
+        try {
+            if(user.publicMetadata.role === 'seller') {
+                setIsSeller(true);
+            }
+            setUserData(userDummyData)
+        } catch (error){
+            console.log(error)
+        }
     }
-
+    
     const addToCart = async (itemId) => {
-
+        
         let cartData = structuredClone(cartItems);
         if (cartData[itemId]) {
             cartData[itemId] += 1;
@@ -40,11 +47,11 @@ export const AppContextProvider = (props) => {
             cartData[itemId] = 1;
         }
         setCartItems(cartData);
-
+        
     }
-
+    
     const updateCartQuantity = async (itemId, quantity) => {
-
+        
         let cartData = structuredClone(cartItems);
         if (quantity === 0) {
             delete cartData[itemId];
@@ -52,9 +59,9 @@ export const AppContextProvider = (props) => {
             cartData[itemId] = quantity;
         }
         setCartItems(cartData)
-
+        
     }
-
+    
     const getCartCount = () => {
         let totalCount = 0;
         for (const items in cartItems) {
@@ -64,7 +71,7 @@ export const AppContextProvider = (props) => {
         }
         return totalCount;
     }
-
+    
     const getCartAmount = () => {
         let totalAmount = 0;
         for (const items in cartItems) {
@@ -75,15 +82,17 @@ export const AppContextProvider = (props) => {
         }
         return Math.floor(totalAmount * 100) / 100;
     }
-
+    
     useEffect(() => {
         fetchProductData()
     }, [])
-
+    
     useEffect(() => {
-        fetchUserData()
-    }, [])
-
+        if(user) {
+          fetchUserData()
+        }
+    }, [user])
+    
     const value = {
         currency, router,
         isSeller, setIsSeller,
