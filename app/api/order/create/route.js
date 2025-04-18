@@ -25,14 +25,14 @@ export async function POST(req) {
                 userId,
                 address,
                 items,
-                amount: amount + Math.floor( amount * 0.02),
-                date: Date.mow()
+                amount: await amount + Math.floor( amount * 0.02),
+                date: Date.now()
             }
         });
 
         //clear user cart
         const user = await User.findById(userId);
-        user.cartItms = {};
+        user.cartItems = {};
         await user.save();
 
         return NextResponse.json({ success: true, message: 'Order Placed' });
