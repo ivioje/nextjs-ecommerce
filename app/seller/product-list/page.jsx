@@ -1,12 +1,13 @@
 'use client'
 import React, { useEffect, useState } from "react";
-import { assets, productsDummyData } from "@/assets/assets";
+import { assets } from "@/assets/assets";
 import Image from "next/image";
 import { useAppContext } from "@/context/AppContext";
 import Footer from "@/components/seller/Footer";
 import Loading from "@/components/Loading";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { TrashIcon } from "lucide-react";
 
 const ProductList = () => {
 
@@ -24,6 +25,21 @@ const ProductList = () => {
         setProducts(data.products);
         setLoading(false);
       } else toast.error(data.message);
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
+
+  const handleDeleteProduct = async (id) => {
+    try {
+      const token = await getToken();
+      const { data } = await axios.delete('/api/product/delete', {
+        data: { productId: id }, 
+        headers: { Authorization: `Bearer ${token}`}
+     });
+     fetchSellerProduct();
+     if (data.success) return toast.success(data.message);
+     else toast.error(data.message);
     } catch (error) {
       toast.error(error.message)
     }
@@ -52,6 +68,13 @@ const ProductList = () => {
               </tr>
             </thead>
             <tbody className="text-sm text-gray-500">
+              <tr>
+                {!products.length && 
+                  <td className="text-gray-500 text-center text-lg italic shadow-sm">
+                    No Product avaliable
+                  </td> 
+                }
+            </tr>
               {products.map((product, index) => (
                 <tr key={index} className="border-t border-gray-500/20">
                   <td className="md:px-4 pl-2 md:pl-4 py-3 flex items-center space-x-3 truncate">
@@ -78,6 +101,12 @@ const ProductList = () => {
                         src={assets.redirect_icon}
                         alt="redirect_icon"
                       />
+                    </button>
+                  </td>
+                  <td className="px-4 py-3 max-sm:hidden">
+                    <button onClick={() => handleDeleteProduct(product._id)} className="flex items-center gap-1 px-1.5 md:px-3.5 py-2 bg-red-600 text-white rounded-md">
+                      <span className="hidden md:block">Delete</span>
+                      <TrashIcon size={15} />
                     </button>
                   </td>
                 </tr>
