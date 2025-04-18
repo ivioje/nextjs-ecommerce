@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useAppContext } from "@/context/AppContext";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { LoaderCircle } from "lucide-react";
 
 const AddProduct = () => {
   const { getToken } = useAppContext()
@@ -15,10 +16,11 @@ const AddProduct = () => {
   const [category, setCategory] = useState('Earphone');
   const [price, setPrice] = useState('');
   const [offerPrice, setOfferPrice] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
+    setSubmitting(true);
     e.preventDefault();
-
     const formData = new FormData()
 
     formData.append('name', name);
@@ -37,6 +39,7 @@ const AddProduct = () => {
 
       if(data.success) {
         toast.success(data.message);
+        setSubmitting(false);
         setFiles([]);
         setName('');
         setDescription('')
@@ -157,8 +160,8 @@ const AddProduct = () => {
             />
           </div>
         </div>
-        <button type="submit" className="px-8 py-2.5 bg-orange-600 text-white font-medium rounded">
-          ADD
+        <button type="submit" className="px-8 py-2.5 bg-orange-600 text-white font-medium rounded flex items-center">
+          ADD {submitting ? <LoaderCircle className="animate-spin" /> : null}
         </button>
       </form>
       {/* <Footer /> */}

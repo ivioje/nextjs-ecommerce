@@ -26,8 +26,33 @@ export const AppContextProvider = (props) => {
     const [cartItems, setCartItems] = useState({})
 
     const fetchProductData = async () => {
-        setProducts(productsDummyData)
+        try {
+            const { data } = await axios.get('/api/product/list')
+            if(data.success) {
+                setProducts(data.products)
+            } else toast.error(data.message)
+        } catch (error) {
+            toast.error(error.message)
+        };
     }
+
+    const createUserIfNeeded = async () => {
+        try {
+            const token = await getToken();
+            const userPayload = {
+                name: `${user?.firstName} ${user?.lastName}`,
+                email: user.primaryEmailAddress.emailAddress,
+                imageUrl: user.imageUrl,
+            };
+            await axios.post('/api/user/create', userPayload, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+        } catch (error) {
+            console.error("Error creating user:", error.message);
+            toast.error("Failed to initialize user account.");
+        }
+    };
+    
     
     const fetchUserData = async () => {
         try {
@@ -41,6 +66,7 @@ export const AppContextProvider = (props) => {
             if(data.success) {
                 setUserData(data.user);
                 setCartItems(data.user.cartItems);
+                toast.success('Login successful')
             } else { toast.error(data.message); }
             
         } catch (error){
@@ -49,17 +75,33 @@ export const AppContextProvider = (props) => {
     }
     
     const addToCart = async (itemId) => {
-        
         let cartData = structuredClone(cartItems);
+        const isNewItem = !cartData[itemId];
+    
         if (cartData[itemId]) {
             cartData[itemId] += 1;
-        }
-        else {
+        } else {
             cartData[itemId] = 1;
         }
+    
         setCartItems(cartData);
-        
+    
+        if (user) {
+            try {
+                const token = await getToken();
+                await axios.post('/api/cart/update', { cartData }, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+    
+                toast.success(isNewItem ? 'Item added to cart' : 'Cart updated');
+                console.log(cartData);
+    
+            } catch (error) {
+                toast.error(error.message);
+            }
+        }
     }
+    
     
     const updateCartQuantity = async (itemId, quantity) => {
         
@@ -69,7 +111,17 @@ export const AppContextProvider = (props) => {
         } else {
             cartData[itemId] = quantity;
         }
-        setCartItems(cartData)
+        setCartItems(cartData);
+
+        if(user) {
+            try {
+                const token = await getToken();
+                await axios.post('/api/cart/update', { cartData }, { headers: { Authorization: `Bearer ${token}`}});
+                toast.success('Cart updated');                
+            } catch (error) {
+                toast.error(error.message);
+            }
+        }
         
     }
     
@@ -99,10 +151,14 @@ export const AppContextProvider = (props) => {
     }, [])
     
     useEffect(() => {
-        if(user) {
-          fetchUserData()
-        }
-    }, [user])
+        const initializeUser = async () => {
+            if (user) {
+                await createUserIfNeeded();
+                await fetchUserData();
+            }
+        };
+        initializeUser();
+    }, [user]);
     
     const value = {
         currency, router,
