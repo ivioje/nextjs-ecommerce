@@ -49,7 +49,8 @@ const AddProduct = () => {
       } else toast.error(data.message);
 
     } catch (error) {
-      toast.error(error.message)
+      toast.error(error.message);
+      setSubmitting(false);
     };
   };
 
