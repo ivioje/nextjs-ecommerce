@@ -1,6 +1,6 @@
 import connectToDB from "@/config/db";
 import authSeller from "@/lib/authSeller";
-import Product from "@/models/product.models";
+import Product from "@/models/product.model";
 import { getAuth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 

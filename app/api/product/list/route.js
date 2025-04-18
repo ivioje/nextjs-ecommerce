@@ -1,5 +1,5 @@
 import connectToDB from "@/config/db";
-import Product from "@/models/product.models";
+import Product from "@/models/product.model";
 import { NextResponse } from "next/server";
 
 // fetch the seller's products

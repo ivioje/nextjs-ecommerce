@@ -1,6 +1,6 @@
 import { Inngest } from "inngest";
 import connectToDB from "./db";
-import User from "@/models/user.models";
+import User from "@/models/user.model";
 
 // Create a client to send and receive events
 export const inngest = new Inngest({ id: "star-boutique" });

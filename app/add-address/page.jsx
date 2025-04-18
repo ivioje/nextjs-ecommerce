@@ -4,21 +4,46 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Image from "next/image";
 import { useState } from "react";
+import { useAppContext } from "@/context/AppContext";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { LoaderCircle } from "lucide-react";
 
 const AddAddress = () => {
+    const { getToken, router } = useAppContext()
 
     const [address, setAddress] = useState({
         fullName: '',
         phoneNumber: '',
-        pincode: '',
+        zipcode: '',
         area: '',
         city: '',
         state: '',
     })
+    const [submitting, setSubmitting] = useState(false);
 
     const onSubmitHandler = async (e) => {
+        setSubmitting(true);
         e.preventDefault();
 
+        try {
+            const token = await getToken();
+            const { data } = await axios.post('/api/user/add-address', { address }, 
+                { headers: { Authorization: `Bearer ${token}`}}
+            );
+            if (data.success) {
+                toast.success(data.message);
+                router.push('/cart');
+                setSubmitting(false);
+            } else {
+                toast.error(data.message);
+                setSubmitting(false);
+            }
+
+        } catch (error) {
+         toast.error(error.message);
+         setSubmitting(false);
+        }
     }
 
     return (
@@ -47,9 +72,9 @@ const AddAddress = () => {
                         <input
                             className="px-2 py-2.5 focus:border-orange-500 transition border border-gray-500/30 rounded outline-none w-full text-gray-500"
                             type="text"
-                            placeholder="Pin code"
-                            onChange={(e) => setAddress({ ...address, pincode: e.target.value })}
-                            value={address.pincode}
+                            placeholder="Zip code"
+                            onChange={(e) => setAddress({ ...address, zipcode: e.target.value })}
+                            value={address.zipcode}
                         />
                         <textarea
                             className="px-2 py-2.5 focus:border-orange-500 transition border border-gray-500/30 rounded outline-none w-full text-gray-500 resize-none"
@@ -76,8 +101,8 @@ const AddAddress = () => {
                             />
                         </div>
                     </div>
-                    <button type="submit" className="max-w-sm w-full mt-6 bg-orange-600 text-white py-3 hover:bg-orange-700 uppercase">
-                        Save address
+                    <button type="submit" className="max-w-sm w-full mt-6 bg-orange-600 text-white py-3 hover:bg-orange-700 uppercase flex items-center justify-center">
+                        Save address {submitting ? <LoaderCircle size={17} className="animate-spin" /> : null}
                     </button>
                 </form>
                 <Image
