@@ -5,7 +5,7 @@ import Image from "next/image";
 const products = [
   {
     id: 1,
-    image: assets.girl_with_headphone_image,
+    image: assets.outfit_1,
     title: "Unparalleled Sound",
     description: "Experience crystal-clear audio with premium headphones.",
   },
@@ -17,7 +17,7 @@ const products = [
   },
   {
     id: 3,
-    image: assets.boy_with_laptop_image,
+    image: assets.outfit_2,
     title: "Power in Every Pixel",
     description: "Shop the latest laptops for work, gaming, and more.",
   },
@@ -47,6 +47,7 @@ const FeaturedProduct = () => {
               <button className="flex items-center gap-1.5 bg-orange-600 px-4 py-2 rounded">
                 Buy now <Image className="h-3 w-3" src={assets.redirect_icon} alt="Redirect Icon" />
               </button>
+              <br />
             </div>
           </div>
         ))}

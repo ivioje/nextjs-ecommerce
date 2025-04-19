@@ -11,6 +11,20 @@ const OrderSummary = () => {
 
   const [userAddresses, setUserAddresses] = useState([]);
 
+  const [showStripeModal, setShowStripeModal] = useState(false);
+  const [paymentCompleted, setPaymentCompleted] = useState(false);
+
+  const handleStripePayment = () => {
+    if (!selectedAddress) return toast.error('Please select an address');
+    setShowStripeModal(true);
+  };
+
+  const handlePaymentSuccess = () => {
+    setShowStripeModal(false);
+    setPaymentCompleted(true);
+    toast.success('Payment successful!');
+  };
+
   const fetchUserAddresses = async () => {
     try {
       const token = await getToken();
@@ -155,9 +169,29 @@ const OrderSummary = () => {
         </div>
       </div>
 
-      <button onClick={createOrder} className="w-full bg-orange-600 text-white py-3 mt-5 hover:bg-orange-700">
-        Place Order
-      </button>
+      {!paymentCompleted ? (
+        <button
+          onClick={handleStripePayment}
+          className="w-full bg-orange-600 text-white py-3 mt-5 hover:bg-orange-700"
+        >
+          Pay Now
+        </button>
+        ) : (
+          <button
+            onClick={createOrder}
+            className="w-full bg-green-600 text-white py-3 mt-5 hover:bg-green-700"
+          >
+            Place Order
+          </button>
+        )}
+        {showStripeModal && (
+          <StripeCheckoutModal
+            amount={getCartAmount() + Math.floor(getCartAmount() * 0.02)}
+            onClose={() => setShowStripeModal(false)}
+            onPaymentSuccess={handlePaymentSuccess}
+          />
+        )}
+
     </div>
   );
 };
