@@ -1,7 +1,8 @@
-import { useAppContext } from "@/context/AppContext";
 import axios from "axios";
+import { useAppContext } from "@/context/AppContext";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import StripeInlinePayment from "./StripeCheckoutModal";
 
 const OrderSummary = () => {
 
@@ -10,20 +11,7 @@ const OrderSummary = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const [userAddresses, setUserAddresses] = useState([]);
-
-  const [showStripeModal, setShowStripeModal] = useState(false);
-  const [paymentCompleted, setPaymentCompleted] = useState(false);
-
-  const handleStripePayment = () => {
-    if (!selectedAddress) return toast.error('Please select an address');
-    setShowStripeModal(true);
-  };
-
-  const handlePaymentSuccess = () => {
-    setShowStripeModal(false);
-    setPaymentCompleted(true);
-    toast.success('Payment successful!');
-  };
+  const [paid, setPaid] = useState(false);
 
   const fetchUserAddresses = async () => {
     try {
@@ -66,7 +54,7 @@ const OrderSummary = () => {
       if (data.success) {
         toast.success(data.message);
         setCartItems({});
-        router.push('/order-placed')
+        router.push('/order-placed');
       } else {
         toast.error(data.message)
       }
@@ -169,29 +157,17 @@ const OrderSummary = () => {
         </div>
       </div>
 
-      {!paymentCompleted ? (
-        <button
-          onClick={handleStripePayment}
-          className="w-full bg-orange-600 text-white py-3 mt-5 hover:bg-orange-700"
-        >
-          Pay Now
-        </button>
-        ) : (
-          <button
-            onClick={createOrder}
-            className="w-full bg-green-600 text-white py-3 mt-5 hover:bg-green-700"
-          >
-            Place Order
-          </button>
-        )}
-        {showStripeModal && (
-          <StripeCheckoutModal
-            amount={getCartAmount() + Math.floor(getCartAmount() * 0.02)}
-            onClose={() => setShowStripeModal(false)}
-            onPaymentSuccess={handlePaymentSuccess}
-          />
-        )}
-
+      {!paid && (
+        <StripeInlinePayment
+          amount={getCartAmount() + Math.floor(getCartAmount() * 0.02)}
+          onPaymentSuccess={() => {
+            setPaid(true);
+            createOrder();
+            toast.success('Payment Successful');
+            
+          }}
+        />
+      )}
     </div>
   );
 };

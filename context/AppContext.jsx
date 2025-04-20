@@ -24,6 +24,8 @@ export const AppContextProvider = (props) => {
     const [userData, setUserData] = useState(false)
     const [isSeller, setIsSeller] = useState(false)
     const [cartItems, setCartItems] = useState({})
+    const [orders, setOrders] = useState([]);
+    const [orderLoading, setOrderLoading] = useState(true);
 
     const fetchProductData = async () => {
         try {
@@ -34,6 +36,22 @@ export const AppContextProvider = (props) => {
         } catch (error) {
             toast.error(error.message)
         };
+    }
+
+    const fetchOrders = async () => {
+        try {
+            const token = await getToken();
+            const { data } = await axios.get('/api/order/list', { headers: { Authorization: `Bearer ${token}` } });
+
+            if (data.success) {
+                setOrders(data.orders.reverse());
+                setOrderLoading(false)
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
     }
 
     const createUserIfNeeded = async () => {
@@ -168,7 +186,8 @@ export const AppContextProvider = (props) => {
         cartItems, setCartItems,
         addToCart, updateCartQuantity,
         getCartCount, getCartAmount,
-        user, getToken
+        user, getToken, fetchOrders,
+        orders, orderLoading
     }
 
     return (

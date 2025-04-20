@@ -6,11 +6,12 @@ import { useEffect } from 'react'
 
 const OrderPlaced = () => {
 
-  const { router } = useAppContext()
+  const { router, fetchOrders } = useAppContext()
 
   useEffect(() => {
     setTimeout(() => {
-      router.push('/my-orders')
+      router.push('/my-orders');
+      fetchOrders();
     }, 5000)
   }, [])
 

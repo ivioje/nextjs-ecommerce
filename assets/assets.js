@@ -48,6 +48,7 @@ import hero3 from "./outfits/hero3.png";
 import hero4 from "./outfits/hero4.png";
 import outfit_1 from "./outfits/outfit13.jpg";
 import outfit_2 from "./outfits/outfit7.webp";
+import noOrders from "./outfits/no-orders.jpg";
 import product_details_page_apple_earphone_image1 from "./product_details_page_apple_earphone_image1.png";
 import product_details_page_apple_earphone_image2 from "./product_details_page_apple_earphone_image2.png";
 import product_details_page_apple_earphone_image3 from "./product_details_page_apple_earphone_image3.png";
@@ -55,7 +56,7 @@ import product_details_page_apple_earphone_image4 from "./product_details_page_a
 import product_details_page_apple_earphone_image5 from "./product_details_page_apple_earphone_image5.png";
 
 export const assets = {
-  hero1, hero2, hero3, hero4, outfit_1, outfit_2,
+  hero1, hero2, hero3, hero4, outfit_1, outfit_2, noOrders,
   logo,
   search_icon,
   user_icon,
