@@ -102,6 +102,7 @@ const Cart = () => {
               </tbody>
             </table>
           </div>
+          {!Object.keys(cartItems).length && <div className="text-gray-400 my-4 font-medium">Nothing is in your cart!</div>}
           <button onClick={()=> router.push('/all-products')} className="group flex items-center mt-6 gap-2 text-orange-600">
             <Image
               className="group-hover:-translate-x-1 transition"
@@ -111,7 +112,7 @@ const Cart = () => {
             Continue Shopping
           </button>
         </div>
-        <OrderSummary />
+        {Object.keys(cartItems).length ? <OrderSummary /> : null}
       </div>
     </>
   );

@@ -63,7 +63,6 @@ const MyOrders = () => {
                                         <span>Payment : Success</span>
                                     </p>
                                 </div>
-                                <p className="font-medium my-auto">{currency}{order.c}</p>
                             </div>
                         ))}
                     </div>)}

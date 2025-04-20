@@ -160,9 +160,9 @@ const OrderSummary = () => {
       {!paid && (
         <StripeInlinePayment
           amount={getCartAmount() + Math.floor(getCartAmount() * 0.02)}
-          onPaymentSuccess={() => {
+          onPaymentSuccess={async () => {
             setPaid(true);
-            createOrder();
+            await createOrder();
             toast.success('Payment Successful');
             
           }}
