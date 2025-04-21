@@ -62,7 +62,7 @@ const CheckoutForm = ({ amount, onPaymentSuccess }) => {
       <button
         type="submit"
         disabled={!stripe || loading || amount === 0}
-        className="bg-orange-600 text-white py-2 px-4 rounded w-full disabled:bg-gray-400"
+        className="bg-gray-600 text-white py-2 px-4 rounded w-full disabled:bg-gray-400"
       >
         {loading ? 'Processing...' : 'Pay with Card'}
       </button>
